@@ -52,10 +52,12 @@
 
 		v2f vert(appdata v) {
 			v2f o;
-			o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 			float time = _Time * _Speed;
 			float waveValueA = sin(time + v.vertex * _Frequency) * _Amplitude;
-			o.vertex.xyz = float3(v.vertex.x, v.vertex.y + waveValueA,v.vertex.z);
+			v.vertex.xyz = float3(v.vertex.x, v.vertex.y + waveValueA,v.vertex.z);
+			o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+			
+			
 			return o;
 		}
 

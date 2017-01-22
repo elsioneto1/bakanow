@@ -45,6 +45,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Character.cs" />
+     <Compile Include="Assets\Scripts\Level\IsGround.cs" />
+     <Compile Include="Assets\Scripts\Mecas\IsAMecha.cs" />
      <Compile Include="Assets\Scripts\Weapon\Ray.cs" />
      <None Include="Assets\Scripts\Shaders\Frequency.shader" />
  <Reference Include="UnityEngine.UI">
