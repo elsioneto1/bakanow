@@ -130,7 +130,7 @@ public class Ray : MonoBehaviour {
 
     public Vector3 RotateVector(Vector3 v, float angle)
     {
-        Debug.Log(v);
+
         Vector3 vec = Vector3.zero;
 
         Matrix4x4 m = new Matrix4x4();
@@ -141,8 +141,6 @@ public class Ray : MonoBehaviour {
 
         vec = m.MultiplyVector(v);
 
-        Debug.Log(vec);
-        Debug.Log("");
         return vec;
 
     }
