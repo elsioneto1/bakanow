@@ -44,6 +44,7 @@ public class Character : MonoBehaviour {
     bool negativeVelocity;
 	// Use this for initialization
 	void Start () {
+
 	    if ( playerType == PlayerType.p1)
         {
             inputModifier = "P1";

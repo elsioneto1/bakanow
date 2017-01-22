@@ -17,12 +17,12 @@ public class Ray : MonoBehaviour {
     public List<Point> points = new List<Point>();
     public Point LatestPoint;
 
-    
 
+    public GameObject Arm;
 
     public float Frequency = 120;
 
-
+    public Transform raySpawnPoint;
     public bool firing;
     public float fireRate  = 0.5f;
     float lastShot;
@@ -56,81 +56,83 @@ public class Ray : MonoBehaviour {
         {
             for (int i = 0; i < 1000; i++)
             {
-                lineRenderer.SetPosition(i, cachedTransform.position);
+                lineRenderer.SetPosition(i, raySpawnPoint.position);
             }
               
         }
 
-       
-            
 
-                overheatTime += Time.deltaTime;
+        Arm.transform.rotation = Quaternion.Euler(new Vector3(0,0,angle));
 
-                for (int i = 0; i < 1000; i++)
-                {
-                    lineRenderer.SetPosition(i, cachedTransform.position);
-                }
+        overheatTime += Time.deltaTime;
+
+        for (int i = 0; i < 1000; i++)
+        {
+            lineRenderer.SetPosition(i, raySpawnPoint.position);
+        }
               
 
-                if (firing)
+        if (firing)
+        {
+
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                points[i].MyPosition += points[i].Direction * Time.deltaTime * LineDrawSpeed;
+                lineRenderer.SetPosition(i, points[i].MyPosition);
+            }
+
+            if (overheatTime < overheatLimit)
+            {
+
+                if (lastShot < 0)
                 {
-                    Debug.Log("asdasd");
 
-                    for (int i = 0; i < points.Count; i++)
-                    {
-                        points[i].MyPosition += points[i].Direction * Time.deltaTime * LineDrawSpeed;
-                        lineRenderer.SetPosition(i, points[i].MyPosition);
-                    }
-                    if (overheatTime < overheatLimit)
-                    {
+                    SpawnPoint();
+                    lastShot = fireRate;
+                }
 
-                        if (lastShot < 0)
-                        {
+                lastShot -= Time.deltaTime;
 
-                            SpawnPoint();
-                            lastShot = fireRate;
-                        }
+            }
+            else
+            {
 
-                        lastShot -= Time.deltaTime;
-
-                    }
-                    else
-                    {
-
-                       if (!overheated)
-                       {
-                           overheated = true;
-                           overheatTime = 5;
-                           firing = false;
-                       }
+                if (!overheated)
+                {
+                    overheated = true;
+                    overheatTime = 5;
+                    firing = false;
+                }
                       
 
-                    }
-                }
-                else
+            }
+
+        }
+        else
+        {
+
+            if (overheated)
+            {
+                overheatTime -= Time.deltaTime * 2.5f;
+                if (overheatTime < 0)
                 {
-
-                    if (overheated)
-                    {
-                        overheatTime -= Time.deltaTime * 2.5f;
-                        if (overheatTime < 0)
-                        {
-                            overheatTime = 0;
-                            overheated = false;
-                            firing = false;
-                        }
-                    }
-                    else
-                    {
-                        points = null;
-
-                        overheatTime -= Time.deltaTime * 2;
-                        if (overheatTime < 0)
-                        {
-                            overheatTime = 0;
-                        }
-                    }
+                    overheatTime = 0;
+                    overheated = false;
+                    firing = false;
                 }
+            }
+            else
+            {
+                points = null;
+
+                overheatTime -= Time.deltaTime * 2;
+                if (overheatTime < 0)
+                {
+                    overheatTime = 0;
+                }
+            }
+        }
             
      
 
@@ -158,7 +160,7 @@ public class Ray : MonoBehaviour {
     public void SpawnPoint()
     {
 
-        points.Add(new Point(cachedTransform.position ,points.Count == 0? null : points[points.Count -1],  RotateVector( cachedTransform.right, (angle * Mathf.PI) / 180 )));
+        points.Add(new Point(raySpawnPoint.position  , points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right, (angle * Mathf.PI) / 180)));
 
     }
 
