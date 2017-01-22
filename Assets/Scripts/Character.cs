@@ -9,6 +9,8 @@ public class Character : MonoBehaviour {
 
     public PlayerType playerType;
 
+    Ray ray;
+
     public float InputX;
     public float InputY;
     string inputModifier;
@@ -16,6 +18,10 @@ public class Character : MonoBehaviour {
     public string jumpingKey;
 
     public string movementX;
+
+    public string rightStickHorizontal;
+    public string rightStickVertical;
+    public string FiringKey;
 
     public float rightStickX;
     public float rightStickY;
@@ -33,6 +39,8 @@ public class Character : MonoBehaviour {
     public float jumpForce = 8;
     public float addForceOnJump;
 
+
+
     bool negativeVelocity;
 	// Use this for initialization
 	void Start () {
@@ -49,6 +57,12 @@ public class Character : MonoBehaviour {
 
         movementX = "Horizontal" + inputModifier;
         jumpingKey = "Jump" + inputModifier;
+        rightStickHorizontal = "RightHorizontal" + inputModifier;
+        rightStickVertical = "RightVertical" + inputModifier;
+        FiringKey = "Fire" + inputModifier; 
+
+        ray = GetComponent<Ray>();
+
 	}
 	
 	// Update is called once per frame
@@ -56,18 +70,41 @@ public class Character : MonoBehaviour {
 	    
         InputX = Input.GetAxis(movementX);
         jumping = Input.GetAxis(jumpingKey);
+        rightStickX = Input.GetAxis(rightStickHorizontal);
+        rightStickY = -Input.GetAxis(rightStickVertical);
+        
+        int angleNegative = rightStickY < 0? -1 : 1;
 
+
+
+        if (Input.GetAxis(FiringKey) > 0)
+        {
+            firing = true;
+        }
+        else
+        {
+            firing = false;
+        }
 
 
         Vector2 inputRight = new Vector2(rightStickX,rightStickY);
-
         Vector2 inputDis = inputRight.normalized;
 
-        Debug.Log(inputDis);
+
+        if (!ray.overheated)
+        {
+            ray.firing = firing;
+        }
+        else
+        {
+            ray.firing = false;
+        }
         Vector2 right = new Vector2(1,0);
         angle = Vector2.Angle(right,inputDis);
+        angle *= angleNegative;
+        
 
-
+        ray.angle = angle;
         if (grounded)
         {
             transform.position += new Vector3(InputX * 0.2f, 0, 0);

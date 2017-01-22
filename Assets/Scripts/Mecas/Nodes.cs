@@ -78,15 +78,18 @@ public class Nodes : MonoBehaviour {
     {
         if ( ray.firing)
         {
-            for (int j = 0; j < ray.points.Count; j++)
+            if (ray.points != null)
             {
-                float distance =Vector3.Distance(new Vector3( ray.points[j].MyPosition.x,ray.points[j].MyPosition.y,0), 
-                    new Vector3 (transform.position.x,transform.position.y,0));
-                //Debug.Log(distance);
-                if(distance < hitRadius)
+                for (int j = 0; j < ray.points.Count; j++)
                 {
-                    Debug.Log("HIT");
-                    return true;
+                    float distance = Vector3.Distance(new Vector3(ray.points[j].MyPosition.x, ray.points[j].MyPosition.y, 0),
+                        new Vector3(transform.position.x, transform.position.y, 0));
+                    //Debug.Log(distance);
+                    if (distance < hitRadius)
+                    {
+                        Debug.Log("HIT");
+                        return true;
+                    }
                 }
             }
         }

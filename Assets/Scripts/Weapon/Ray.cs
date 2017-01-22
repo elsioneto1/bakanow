@@ -47,8 +47,21 @@ public class Ray : MonoBehaviour {
 	void Update () {
 
 
-        if (points != null)
+        if (firing && ! overheated)
         {
+            if (points == null)
+                points = new List<Point>();
+        }
+        else
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                lineRenderer.SetPosition(i, cachedTransform.position);
+            }
+              
+        }
+
+       
             
 
                 overheatTime += Time.deltaTime;
@@ -61,6 +74,8 @@ public class Ray : MonoBehaviour {
 
                 if (firing)
                 {
+                    Debug.Log("asdasd");
+
                     for (int i = 0; i < points.Count; i++)
                     {
                         points[i].MyPosition += points[i].Direction * Time.deltaTime * LineDrawSpeed;
@@ -117,13 +132,7 @@ public class Ray : MonoBehaviour {
                     }
                 }
             
-        }
-        else
-        {
-            //points = null;
-        }
-
-
+     
 
 
 	}
