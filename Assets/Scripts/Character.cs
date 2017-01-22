@@ -17,6 +17,9 @@ public class Character : MonoBehaviour {
 
     public string movementX;
 
+    public float rightStickX;
+    public float rightStickY;
+
     public bool grounded = true;
     public bool onAir;
     public float jumping;
@@ -54,6 +57,15 @@ public class Character : MonoBehaviour {
         InputX = Input.GetAxis(movementX);
         jumping = Input.GetAxis(jumpingKey);
 
+
+
+        Vector2 inputRight = new Vector2(rightStickX,rightStickY);
+
+        Vector2 inputDis = inputRight.normalized;
+
+        Debug.Log(inputDis);
+        Vector2 right = new Vector2(1,0);
+        angle = Vector2.Angle(right,inputDis);
 
 
         if (grounded)
