@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Ray : MonoBehaviour {
 
     Transform cachedTransform;
-
+    CharacterAnimationController chracAnim;
     public LineRenderer lineRenderer;
 
     public float LineDrawSpeed;
@@ -35,7 +35,7 @@ public class Ray : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-      
+        chracAnim = GetComponent<CharacterAnimationController>();
         cachedTransform = transform;
         lineRenderer.sortingLayerName = "OnTop";
         lineRenderer.sortingOrder = 5;
@@ -160,7 +160,7 @@ public class Ray : MonoBehaviour {
     public void SpawnPoint()
     {
 
-        points.Add(new Point(raySpawnPoint.position  , points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right, (angle * Mathf.PI) / 180)));
+        points.Add(new Point(raySpawnPoint.position, points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right * chracAnim.direction, (angle * chracAnim.direction * Mathf.PI) / 180)));
 
     }
 

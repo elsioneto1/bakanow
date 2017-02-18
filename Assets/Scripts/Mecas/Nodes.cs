@@ -87,7 +87,7 @@ public class Nodes : MonoBehaviour {
                     //Debug.Log(distance);
                     if (distance < hitRadius)
                     {
-                        Debug.Log("HIT");
+                        //Debug.Log("HIT");
                         return true;
                     }
                 }

@@ -46,6 +46,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Animation\CharacterAnimationController.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraBehaviour.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraWeights.cs" />
      <Compile Include="Assets\Scripts\Character.cs" />
      <Compile Include="Assets\Scripts\Level\IsGround.cs" />
      <Compile Include="Assets\Scripts\Mecas\IsAMecha.cs" />

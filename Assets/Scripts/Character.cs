@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Character : MonoBehaviour {
 
-
+    CharacterAnimationController characAnim;
 
     public enum PlayerType { p1, p2 };
 
@@ -45,6 +45,8 @@ public class Character : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+        characAnim = GetComponent<CharacterAnimationController>();
+
 	    if ( playerType == PlayerType.p1)
         {
             inputModifier = "P1";
@@ -65,7 +67,7 @@ public class Character : MonoBehaviour {
         ray = GetComponent<Ray>();
 
 	}
-	
+    bool lockImpulse = false;
 	// Update is called once per frame
 	void Update () {
 	    
@@ -89,7 +91,7 @@ public class Character : MonoBehaviour {
 
 
         Vector2 inputRight = new Vector2(rightStickX,rightStickY);
-        Vector2 inputDis = inputRight.normalized;
+        Vector2 inputDis = inputRight.normalized * characAnim.direction;
 
 
         if (!ray.overheated)
@@ -108,7 +110,7 @@ public class Character : MonoBehaviour {
         ray.angle = angle;
         if (grounded)
         {
-            transform.position += new Vector3(InputX * 0.2f, 0, 0);
+            transform.position += new Vector3(InputX * 0.3f, 0, 0);
         }
         else
         {
@@ -155,13 +157,22 @@ public class Character : MonoBehaviour {
 
         }
 
+        if ( Mathf.Abs( body.velocity.y ) > 0.1f)
+        {
+            if (!lockImpulse)
+            {
+                lockImpulse = true;
+                grounded = false;
+                jumpingX = InputX * 0.15f;
+            }
+        }
 
 	}
 
 
     public void OnCollisionEnter2D(Collision2D col)
     {
-
+        lockImpulse = false;
         grounded = true;
         float isUp = body.velocity.y > 0? 1 : -1;
         if (body.velocity.y  <= 0)
