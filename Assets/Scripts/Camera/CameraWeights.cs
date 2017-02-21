@@ -7,7 +7,7 @@ public class CameraWeights : MonoBehaviour {
     public Transform myTransform;
     public float cameraDot;
 
-    [Range(0,1)]
+    [Range(0.01f,1)]
     public float MoveInfluence = 1;
 
 	// Use this for initialization

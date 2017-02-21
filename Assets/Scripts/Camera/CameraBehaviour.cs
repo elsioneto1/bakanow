@@ -28,7 +28,7 @@ public class CameraBehaviour : MonoBehaviour {
 
         CameraMove();
         
-//        GetCameraDotOnWeights();
+        GetCameraDotOnWeights();
 	    
 	}
 
@@ -79,7 +79,7 @@ public class CameraBehaviour : MonoBehaviour {
             }
         }
       //  if (myTransform.position.z < -20f)
-        Debug.Log(newPosition);
+
         myTransform.position -= newPosition * 0.2f;
     }
     
@@ -87,47 +87,53 @@ public class CameraBehaviour : MonoBehaviour {
     {
 
         Vector3 cameraPos = VectorFoo;
-        float previousWeight = -1;
+		Vector3 baricenter;
+        float previousWeight = 0;
         int factorCount = 0;
         float sumWeight = 0;
+		
+		float sumX = 0;
+		float sumY = 0;
+		for (int i = 0; i < weights.Length ; i++) {
+			
+			sumX += weights[i].transform.position.x;
+			sumY += weights[i].transform.position.y;
+
+		}
+        
+		cameraPos = baricenter = new Vector3 (sumX / weights.Length,sumY / weights.Length,0);
+		sumX = 0;
+		sumY = 0;
         for (int i = 0; i < weights.Length; i++)
         {
-            if (cameraPos == VectorFoo)
+			
+			float _sumX = 0;
+			
+            float _sumY = 0;
+            previousWeight += weights[i].MoveInfluence;
+			//for (int j = 0;  j < weights.Length; j++) 
             {
-                cameraPos = weights[i].transform.position; // our start point for positioning the camera. The weights have no relevance at this point
-                previousWeight = weights[i].MoveInfluence;
-                if (previousWeight != 0)
-                    sumWeight =   previousWeight;
+            	
+				//if ( i != j)
+				{
 
+					Vector3 displacement =  weights[i].transform.position - baricenter;
+					//displacement ;
+                    Vector3 aresta = (weights[i].transform.position + displacement )
+                        + (displacement * weights[i].MoveInfluence );
+                    sumX += displacement.x * weights[i].MoveInfluence;
+                    sumY += displacement.y * weights[i].MoveInfluence;
+				}
+                    
             }
-            else if (i == 1)
-            {
-               
-                Vector3 vecToBeAdd = weights[i].transform.position - cameraPos; // displacement vector between the two weights
-                vecToBeAdd *= 0.5f;
-                // each side can claim up to 50% of the vector, based on their weights
-                cameraPos = (cameraPos + vecToBeAdd) - ((vecToBeAdd ) * previousWeight) + ((vecToBeAdd ) * weights[i].MoveInfluence);
-                Debug.Log(vecToBeAdd);
-                // the new wieght is the half of the sum of the weights
-                
-                previousWeight = previousWeight + weights[i].MoveInfluence;
-                sumWeight = weights[i].MoveInfluence > sumWeight ? weights[i].MoveInfluence : sumWeight;
+           
+			
+           
+        }        // the z axis has it's own logic
 
-            }
-            else
-            {
-               // float pushingFactor = 0.5f * 
-                Debug.Log(sumWeight);
-                Vector3 vecToBeAdd = weights[i].transform.position - cameraPos; // displacement vector between the two weights
-                vecToBeAdd *= 0.5f;
+        cameraPos = baricenter + new Vector3(sumX / previousWeight, sumY / previousWeight, 0); 
 
-                cameraPos = (cameraPos + vecToBeAdd) - ((vecToBeAdd) * sumWeight) + ((vecToBeAdd) * weights[i].MoveInfluence);
-                sumWeight = weights[i].MoveInfluence > sumWeight ? weights[i].MoveInfluence : sumWeight;
-            }
-        }
-        // the z axis has it's own logic
-       
-        cameraPos += transform.up *2;
+		// cameraPos += transform.up *2;
         cameraPos.z = myTransform.position.z;
         // move the camera with easing
         myTransform.position -= (myTransform.position - cameraPos) * 0.5f;
