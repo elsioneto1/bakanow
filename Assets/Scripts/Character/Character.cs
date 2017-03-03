@@ -38,11 +38,51 @@ public class Character : MonoBehaviour {
 
     public float jumpForce = 8;
     public float addForceOnJump;
-
-
+   // [HideInInspector]
+    public float lerpingSpeed;
+    public float lerpingSpeedThreshold = 0.3f;
+    public float lerpingSpeedVelocity = 0.01f;
+    public float speedMultiplier = 5;
 
     bool negativeVelocity;
 	// Use this for initialization
+    public void GetXSpeed()
+    {
+        if (Mathf.Abs(InputX) < 0.4f && !grounded)
+        {
+            lerpingSpeed += 0;
+        }
+        else if (((Mathf.Abs(InputX) > 0.2f)) && (Mathf.Abs(InputX) < 0.4f) && Mathf.Abs(lerpingSpeed) < 0.3f)
+        {
+
+            lerpingSpeed = InputX < 0 ? -0.28f : 0.28f;
+        }
+        else if (Mathf.Abs(InputX) > 0.4f)
+        {
+
+            if (lerpingSpeed > InputX)
+            {
+
+
+                lerpingSpeed -= lerpingSpeedVelocity;
+                if (lerpingSpeed < -lerpingSpeedThreshold)
+                    lerpingSpeed = -lerpingSpeedThreshold;
+            }
+            else
+            {
+
+                lerpingSpeed += lerpingSpeedVelocity;
+
+                if (lerpingSpeed > lerpingSpeedThreshold)
+                    lerpingSpeed = lerpingSpeedThreshold;
+            }
+        }
+        else
+            lerpingSpeed = 0;
+
+
+    }
+
 	void Start () {
 
         characAnim = GetComponent<CharacterAnimationController>();
@@ -78,8 +118,7 @@ public class Character : MonoBehaviour {
         
         int angleNegative = rightStickY < 0? -1 : 1;
 
-
-
+       
         if (Input.GetAxis(FiringKey) > 0)
         {
             firing = true;
@@ -90,9 +129,10 @@ public class Character : MonoBehaviour {
         }
 
 
-        Vector2 inputRight = new Vector2(rightStickX,rightStickY);
-        Vector2 inputDis = inputRight.normalized * characAnim.direction;
+        Vector2 inputRight = new Vector2(rightStickX, rightStickY);
+        Vector2 inputDis = inputRight.normalized *characAnim.direction;
 
+        GetXSpeed();
 
         if (!ray.overheated)
         {
@@ -105,46 +145,36 @@ public class Character : MonoBehaviour {
         Vector2 right = new Vector2(1,0);
         angle = Vector2.Angle(right,inputDis);
         angle *= angleNegative;
-        
+        // angle *= transform.localScale.x;
 
-        ray.angle = angle;
-        if (grounded)
+        int mul = 1;
+        if (lerpingSpeed < 0)
+            mul = -1;
+
+        float _xSpeed = ((lerpingSpeed * lerpingSpeed) * speedMultiplier) * Time.deltaTime * mul;
+
+        ray.angle = angle * transform.localScale.x;
+       
+
+        //moving the character on X
+        //if (!grounded)
         {
-            transform.position += new Vector3(InputX * 0.3f, 0, 0);
+            transform.position += new Vector3(_xSpeed, 0, 0);
         }
-        else
+        //else
         {
-            transform.position += new Vector3(jumpingX,0,0);
-            // is he flying to the left or right?
-            bool isLeft = jumpingX > 0 ? false : true;
-            if  (isLeft)
-            {
-                if (InputX > 0.5f)
-                {
-                    jumpingX = jumpingX * 0.95f;
-                   // if (jumpingX < -0.05f)
-                      //  jumpingX = -0.05f;
-                }
-            }
-            else
-            {
-                 if (InputX < -0.5f)
-                 {
-                     jumpingX = jumpingX * 0.95f;
-                   //  if (jumpingX > 0.05f)
-                       //  jumpingX = 0.05f;
-                 }
-            }
+
         }
+    
 
-
+        // on jump
         if ( jumping > 0)
         {
             if ( grounded )
             {
                 grounded = false;
                 body.velocity = new Vector3(body.velocity.x, jumpForce);
-                jumpingX = InputX * 0.15f ;
+                //jumpingX = InputX * 0.15f ;
             }
 
         }
@@ -163,7 +193,7 @@ public class Character : MonoBehaviour {
             {
                 lockImpulse = true;
                 grounded = false;
-                jumpingX = InputX * 0.15f;
+                jumpingX = _xSpeed;
             }
         }
 

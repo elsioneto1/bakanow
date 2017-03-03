@@ -61,14 +61,14 @@ public class CharacterAnimationController : MonoBehaviour {
 
 
 
-        if (Mathf.Abs(charac.InputX )> 0.4f)
+        if (Mathf.Abs(charac.InputX )> 0.2f)
         {
 
-            if (charac.InputX < -0.5f)
+            if (charac.InputX < -0.2f)
             {
                 direction = -1;
             }
-            else
+            else if (charac.InputX > 0.2f)
             {
                 direction = 1;
             }

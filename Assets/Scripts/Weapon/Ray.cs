@@ -160,7 +160,7 @@ public class Ray : MonoBehaviour {
     public void SpawnPoint()
     {
 
-        points.Add(new Point(raySpawnPoint.position, points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right * chracAnim.direction, (angle * chracAnim.direction * Mathf.PI) / 180)));
+        points.Add(new Point(raySpawnPoint.position, points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right * chracAnim.direction, (angle  * Mathf.PI) / 180)));
 
     }
 
