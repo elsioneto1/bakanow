@@ -7,19 +7,18 @@ public class MecaMovement : MonoBehaviour {
     public float MecaSpeed;
     public float MecaSpeedThreshold;
     public float MecaSpeedIncrease;
+    public float MecaSpeedMultiplier;
 
     MyInputs myInputs;
-
+    Transform myTransform;
 
 	// Use this for initialization
 	void Start () {
-        myInputs = GetComponent<MyInputs>();	
+        myInputs = GetComponent<MyInputs>();
+
+        myTransform = transform;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     public void GetXSpeed()
     {
@@ -27,11 +26,7 @@ public class MecaMovement : MonoBehaviour {
         {
             MecaSpeed += 0;
         }
-        else if (((Mathf.Abs(myInputs.InputX) > 0.2f)) && (Mathf.Abs(myInputs.InputX) < 0.4f) && Mathf.Abs(MecaSpeed) < 0.3f)
-        {
-
-            MecaSpeed = myInputs.InputX < 0 ? -0.28f : 0.28f;
-        }
+   
         else if (Mathf.Abs(myInputs.InputX) > 0.4f)
         {
 
@@ -57,4 +52,14 @@ public class MecaMovement : MonoBehaviour {
 
 
     }
+
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        GetXSpeed();
+        myTransform.position += new Vector3(MecaSpeed,0,0) * MecaSpeedMultiplier * Time.deltaTime;
+    }
+
 }

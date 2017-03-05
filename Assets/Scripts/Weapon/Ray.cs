@@ -56,6 +56,7 @@ public class Ray : MonoBehaviour {
         {
             for (int i = 0; i < 1000; i++)
             {
+
                 lineRenderer.SetPosition(i, raySpawnPoint.position);
             }
               

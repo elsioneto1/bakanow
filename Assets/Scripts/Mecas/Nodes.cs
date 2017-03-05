@@ -14,13 +14,8 @@ public class Nodes : MonoBehaviour {
     public UnityEvent HitStay;
     public UnityEvent NotHitting;
 
-    public float TimeWithouHitThreshold = 2;
-    public float HittingCoolDown = 0;
+ 
 
-    public float ActivationPercentageIncreaseHit = 10;
-    public float ActivationPercentageDecreaseHit = 10;
-    public float ActivationPercentageDecreaseOnCooldown = 2;
-    public float ActivationTotal = 0;
     public bool active;
 	// Use this for initialization
 	void Start () {
@@ -32,45 +27,19 @@ public class Nodes : MonoBehaviour {
 
         VerifyHitting();
 
-        if ( hittingFriend )
-        {
-            HittingCoolDown = TimeWithouHitThreshold;
-        }
-        else
-        {
 
-        }
-
-        if (!hittingFriend && !hittingEnemy)
-        {
-            HittingCoolDown -= Time.deltaTime;
-            if ( HittingCoolDown< 0)
-            {
-                HittingCoolDown = 0;
-                ActivationTotal -= ActivationPercentageDecreaseOnCooldown;
-            }
-        }
 
         if ( hittingFriend)
         {
             Debug.Log("friend hit");
-            ActivationTotal += ActivationPercentageIncreaseHit;
-        }
-        if (hittingEnemy )
-        {
-            Debug.Log("enemy hit");
-            ActivationTotal -= ActivationPercentageDecreaseHit;
+            active = true;
+          
+            if (HitStay != null)
+                HitStay.Invoke();
         }
 
-        if (ActivationTotal < 0)
-        {
-            ActivationTotal = 0;
-        }
-        else if ( ActivationTotal > 100)
-        {
-            ActivationTotal = 100;
-            active = true;
-        }
+    
+
 
 	}
 
@@ -87,6 +56,9 @@ public class Nodes : MonoBehaviour {
                     //Debug.Log(distance);
                     if (distance < hitRadius)
                     {
+                        ray.points[j].MyPosition = ray.points[j].SpawnPosition;
+                        ray.points[j].Direction = Vector3.zero;
+
                         //Debug.Log("HIT");
                         return true;
                     }

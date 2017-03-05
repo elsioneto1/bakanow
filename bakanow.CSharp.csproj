@@ -115,13 +115,22 @@
     <Compile Include="Assets\Scripts\DragonBonesFiles\UnityTextureData.cs" />
     <Compile Include="Assets\Scripts\DragonBonesTest.cs" />
     <Compile Include="Assets\Scripts\Level\IsGround.cs" />
+    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Mecas\IsAMecha.cs" />
     <Compile Include="Assets\Scripts\Mecas\MecaAnimLoader.cs" />
     <Compile Include="Assets\Scripts\Mecas\MecaAnimationHandler.cs" />
     <Compile Include="Assets\Scripts\Mecas\MecaInputs.cs" />
     <Compile Include="Assets\Scripts\Mecas\MecaMovement.cs" />
     <Compile Include="Assets\Scripts\Mecas\MyInputs.cs" />
+    <Compile Include="Assets\Scripts\Mecas\MyInputs_Meca.cs" />
     <Compile Include="Assets\Scripts\Mecas\Nodes.cs" />
+    <Compile Include="Assets\Scripts\Mecas\RobotCannonActivate.cs" />
+    <Compile Include="Assets\Scripts\Mecas\RobotFishActivate.cs" />
+    <Compile Include="Assets\Scripts\Mecas\RobotLegMove.cs" />
+    <Compile Include="Assets\Scripts\Mecas\RobotModule.cs" />
+    <Compile Include="Assets\Scripts\Mecas\RobotShieldActivate.cs" />
+    <Compile Include="Assets\Scripts\Mecas\RobotSwordActivate.cs" />
+    <Compile Include="Assets\Scripts\Mecas\TiltPart.cs" />
     <Compile Include="Assets\Scripts\Weapon\Ray.cs" />
   </ItemGroup>
   <ItemGroup>
