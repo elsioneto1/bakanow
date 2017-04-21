@@ -14,24 +14,37 @@ public class Nodes : MonoBehaviour {
     public UnityEvent HitStay;
     public UnityEvent NotHitting;
 
- 
-
     public bool active;
+
+    // system management
+    private bool setRays = false;
 	// Use this for initialization
 	void Start () {
         characters = FindObjectsOfType<Character>();
+       
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        VerifyHitting();
+        // system management 
+        if ( Ray.INITIALIZED_ON_SCENE && !setRays)
+        {
+            setRays = true;
+            for (int i = 0; i < Ray.MY_RAYS.Length; i++)
+            {
+                Ray.MY_RAYS[i].AddNodeToList(this);
+            }
+        }
+
+       // VerifyHitting();
 
 
 
         if ( hittingFriend)
         {
-            Debug.Log("friend hit");
+            //Debug.Log("friend hit");
             active = true;
           
             if (HitStay != null)
@@ -43,55 +56,61 @@ public class Nodes : MonoBehaviour {
 
 	}
 
-    public bool Hitting(Ray ray)
-    {
-        if ( ray.firing)
-        {
-            if (ray.points != null)
-            {
-                for (int j = 0; j < ray.points.Count; j++)
-                {
-                    float distance = Vector3.Distance(new Vector3(ray.points[j].MyPosition.x, ray.points[j].MyPosition.y, 0),
-                        new Vector3(transform.position.x, transform.position.y, 0));
-                    //Debug.Log(distance);
-                    if (distance < hitRadius)
-                    {
-                        ray.points[j].MyPosition = ray.points[j].SpawnPosition;
-                        ray.points[j].Direction = Vector3.zero;
 
-                        //Debug.Log("HIT");
-                        return true;
-                    }
-                }
-            }
+    void LateUpdate()
+    {
+        hittingEnemy = false;
+        hittingFriend = false;
+
+    }
+
+
+    public bool Hitting(Point p)
+    {
+        float distance = Vector3.Distance(new Vector3(p.SpawnPosition.x, p.SpawnPosition.y, 0),
+            new Vector3(transform.position.x, transform.position.y, 0));
+
+
+
+
+        if (distance < hitRadius)
+        {
+            p.hit = true;
+            p.SpawnPosition = new Vector3(transform.position.x, transform.position.y, p.SpawnPosition.z);
+            p.Direction = Vector3.zero;
+
+            return true;
         }
+        
+          
         return false;
     }
 
 
-    public void VerifyHitting()
+    public bool VerifyHitting(Point p, Ray r)
     {
         hittingEnemy = false;
         hittingFriend = false;
-        for (int i = 0; i < characters.Length; i++)
+        
+        Character c = r.GetComponent<Character>();
+        // enemy or friend?
+        if (c.playerType == mechaType)
         {
-            Ray ray = characters[i].GetComponent<Ray>();
-            // enemy or friend?
-            if (characters[i].playerType == mechaType)
+            if (Hitting(p))
             {
-                if (Hitting(ray))
-                {
-                    hittingFriend = true;
-                }
-            }
-            else
-            {
-                if (Hitting(ray))
-                {
-                    hittingEnemy = true;
-                }
+                hittingFriend = true;
+                return true;
             }
         }
+        else
+        {
+            if (Hitting(p))
+            {
+                hittingEnemy = true;
+                return true;
+            }
+        }
+        return false;
     }
 
     void OnDrawGizmosSelected()

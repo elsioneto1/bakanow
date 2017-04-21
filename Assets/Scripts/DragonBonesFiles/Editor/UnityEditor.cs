@@ -450,6 +450,13 @@ namespace DragonBones
                 _armatureComponent.animation.timeScale = EditorGUILayout.Slider("Time Scale", _armatureComponent.animation.timeScale, 0.0f, 2.0f);
                 EditorGUILayout.EndHorizontal();
 
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Overwrite Material");
+                _armatureComponent.OverwriteMaterial = EditorGUILayout.TextArea(_armatureComponent.OverwriteMaterial);
+                EditorUtility.SetDirty(_armatureComponent);
+
+                EditorGUILayout.EndHorizontal();
+
                 // Flip
                 /*EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.PrefixLabel("Flip");

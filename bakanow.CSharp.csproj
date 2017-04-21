@@ -77,10 +77,13 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Animation\CharacterAnimationController.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraBehaviour.cs" />
+    <Compile Include="Assets\Scripts\Camera\CameraRail.cs" />
+    <Compile Include="Assets\Scripts\Camera\CameraSettings.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraWeights.cs" />
     <Compile Include="Assets\Scripts\Character\ArmCorrection.cs" />
     <Compile Include="Assets\Scripts\Character\Character.cs" />
     <Compile Include="Assets\Scripts\Character\GroundCollider.cs" />
+    <Compile Include="Assets\Scripts\Character\ShootingCircle.cs" />
     <Compile Include="Assets\Scripts\DragonBones\animation\Animation.cs" />
     <Compile Include="Assets\Scripts\DragonBones\animation\AnimationState.cs" />
     <Compile Include="Assets\Scripts\DragonBones\animation\BaseTimelineState.cs" />
@@ -114,8 +117,23 @@
     <Compile Include="Assets\Scripts\DragonBonesFiles\UnitySlot.cs" />
     <Compile Include="Assets\Scripts\DragonBonesFiles\UnityTextureData.cs" />
     <Compile Include="Assets\Scripts\DragonBonesTest.cs" />
+    <Compile Include="Assets\Scripts\General\DontOverwriteMe.cs" />
+    <Compile Include="Assets\Scripts\General\IsShootable.cs" />
+    <Compile Include="Assets\Scripts\General\OverwriteMaterials.cs" />
     <Compile Include="Assets\Scripts\Level\IsGround.cs" />
+    <Compile Include="Assets\Scripts\Managers\CannonBallManager.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\LineManager.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IAFishThrower.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\Interfaces\IAttackAux.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\Interfaces\IReseter.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IsABigFucknFish.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IsACannonBall.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IsADamager.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IsAProjectile.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IsASword.cs" />
+    <Compile Include="Assets\Scripts\Mecas\Collision\IsDamageable.cs" />
+    <Compile Include="Assets\Scripts\Mecas\IsACannon.cs" />
     <Compile Include="Assets\Scripts\Mecas\IsAMecha.cs" />
     <Compile Include="Assets\Scripts\Mecas\MecaAnimLoader.cs" />
     <Compile Include="Assets\Scripts\Mecas\MecaAnimationHandler.cs" />

@@ -91,7 +91,7 @@ namespace DragonBones
         /**
          * @private
          */
-        private float _time;
+        public float _time;
         /**
          * @private
          */

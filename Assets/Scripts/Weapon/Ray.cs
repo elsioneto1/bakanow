@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class Ray : MonoBehaviour {
 
+
+
     Transform cachedTransform;
     CharacterAnimationController chracAnim;
     public LineRenderer lineRenderer;
@@ -12,9 +14,10 @@ public class Ray : MonoBehaviour {
     public float LineDrawSpeed;
     Vector3 StartingPoint;
 
-
+    int lastPointFiredIndex = -1;
 
     public List<Point> points = new List<Point>();
+    
     public Point LatestPoint;
 
 
@@ -28,9 +31,23 @@ public class Ray : MonoBehaviour {
     float lastShot;
 
     public float angle;
+
+    // overheat variables
     public float overheatTime   = 0;
     public float overheatLimit  = 3;
     public bool overheated = false;
+
+    public Vector3 aimingVector;
+
+    public static Ray[] MY_RAYS; // keep a static access to the rays
+    List<Nodes> Nodes = new List<Nodes>();
+
+
+    public float RaySpacing = 5;
+
+    
+    // system management
+    public static bool INITIALIZED_ON_SCENE = false;
 
 	// Use this for initialization
 	void Start () {
@@ -39,58 +56,62 @@ public class Ray : MonoBehaviour {
         cachedTransform = transform;
         lineRenderer.sortingLayerName = "OnTop";
         lineRenderer.sortingOrder = 5;
-        lineRenderer.SetVertexCount(1000);
-       
+        SpawnPoints();
+
+        lineRenderer.SetVertexCount(points.Count);
+
+        MY_RAYS = FindObjectsOfType<Ray>();
+
 	}
-	
+	void OnDestroy()
+    {
+        INITIALIZED_ON_SCENE = false;
+    }
+
+    public void SpawnPoints()
+    {
+        if (points == null)
+            points = new List<Point>();
+        for (int i = 0; i < 50; i++)
+		{
+            points.Add(new Point(raySpawnPoint.position, points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right * chracAnim.direction, (angle * Mathf.PI) / 180)));
+		}
+    }
+
+
+    // all the nodes we need to have access are addeds by the own nodes when they initialize
+    public void AddNodeToList(Nodes n)
+    {
+        Nodes.Add(n);
+    }
+
 	// Update is called once per frame
 	void Update () {
 
+        // system management
+        INITIALIZED_ON_SCENE = true;
+        lineRenderer.SetVertexCount(points.Count);
 
-        if (firing && ! overheated)
+        for (int i = 0; i < points.Count; i++)
         {
-            if (points == null)
-                points = new List<Point>();
-        }
-        else
-        {
-            for (int i = 0; i < 1000; i++)
-            {
 
-                lineRenderer.SetPosition(i, raySpawnPoint.position);
-            }
-              
-        }
-
-
-        Arm.transform.rotation = Quaternion.Euler(new Vector3(0,0,angle));
-
-        overheatTime += Time.deltaTime;
-
-        for (int i = 0; i < 1000; i++)
-        {
             lineRenderer.SetPosition(i, raySpawnPoint.position);
         }
-              
+
+        Arm.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+        aimingVector = RotateVector(cachedTransform.right * chracAnim.direction, (angle * Mathf.PI) / 180);
 
         if (firing)
         {
-
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                points[i].MyPosition += points[i].Direction * Time.deltaTime * LineDrawSpeed;
-                lineRenderer.SetPosition(i, points[i].MyPosition);
-            }
-
             if (overheatTime < overheatLimit)
             {
 
                 if (lastShot < 0)
                 {
 
-                    SpawnPoint();
-                    lastShot = fireRate;
+                    Shoot();
+
                 }
 
                 lastShot -= Time.deltaTime;
@@ -105,42 +126,14 @@ public class Ray : MonoBehaviour {
                     overheatTime = 5;
                     firing = false;
                 }
-                      
-
-            }
-
-        }
-        else
-        {
-
-            if (overheated)
-            {
-                overheatTime -= Time.deltaTime * 2.5f;
-                if (overheatTime < 0)
-                {
-                    overheatTime = 0;
-                    overheated = false;
-                    firing = false;
-                }
-            }
-            else
-            {
-                points = null;
-
-                overheatTime -= Time.deltaTime * 2;
-                if (overheatTime < 0)
-                {
-                    overheatTime = 0;
-                }
             }
         }
-            
-     
+    
 
 
 	}
 
-    public Vector3 RotateVector(Vector3 v, float angle)
+    public static Vector3 RotateVector(Vector3 v, float angle)
     {
 
         Vector3 vec = Vector3.zero;
@@ -158,11 +151,56 @@ public class Ray : MonoBehaviour {
     }
 
 
-    public void SpawnPoint()
+    public void MovePoint(int i)
     {
 
-        points.Add(new Point(raySpawnPoint.position, points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right * chracAnim.direction, (angle  * Mathf.PI) / 180)));
+//        points[i] =  Point(raySpawnPoint.position, points.Count == 0 ? null : points[points.Count - 1], RotateVector(cachedTransform.right * chracAnim.direction, (angle  * Mathf.PI) / 180)));
 
+    }
+
+    public void Shoot()
+    {
+
+
+
+        for (int i = 0; i < points.Count; i++)
+        {
+
+            points[i].Direction = RotateVector(cachedTransform.right * chracAnim.direction, (angle  * Mathf.PI) / 180);
+           
+            points[i].SpawnPosition = raySpawnPoint.position + (points[i].Direction * i * RaySpacing);
+
+
+            // checks if hit any node
+
+            bool hitting = false;
+            for (int j = 0; j < Nodes.Count; j++)
+            {
+                hitting = Nodes[j].VerifyHitting(points[i], this);
+
+                if (hitting)
+                {
+                    lineRenderer.SetVertexCount(i+1);
+
+                    break;
+                }
+            }
+            lineRenderer.SetPosition(i, points[i].SpawnPosition);
+
+            if (hitting)
+                break;
+
+        }
+
+        //if ( points[i].fired == false)
+        //{
+        //    lastPointFiredIndex = i;
+        //    points[i].fired = true;
+        //    points[i].SpawnPosition = raySpawnPoint.position;
+
+        //    points[i].PointSpawned = lastPointFiredIndex == -1 ? null : points[lastPointFiredIndex];
+        //    points[i].Direction = RotateVector(cachedTransform.right * chracAnim.direction, (angle  * Mathf.PI) / 180);
+        //}
     }
 
 }
@@ -175,6 +213,8 @@ public class Point
     public Point PointSpawned;
     public Vector3 Direction;
     public Vector3 MyPosition;
+    public bool hit = false;
+    public bool fired = false;
 
     public Point(Vector3 spawnPosition, Point pointSpawned, Vector3 direction)
     {

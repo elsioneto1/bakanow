@@ -38,6 +38,7 @@ namespace DragonBones
          * @version DragonBones 4.7
          */
         public string defaultShaderName = "Sprites/Default";
+        public string overwriteMaterial = "";
 
         private string _textureAtlasPath = null;
         private GameObject _armatureGameObject = null;
@@ -223,7 +224,11 @@ namespace DragonBones
             {
                 var textureAtlas = Resources.Load<Texture2D>(textureAtlasData.imagePath);
                 var shader = Shader.Find(defaultShaderName);
-                var material = new Material(shader);
+                Material material;
+
+                material = Resources.Load("Material/" + overwriteMaterial, typeof(Material)) as Material;
+                if (material == null)
+                    material = new Material(shader);
                 material.mainTexture = textureAtlas;
 
                 textureAtlasData.texture = material;

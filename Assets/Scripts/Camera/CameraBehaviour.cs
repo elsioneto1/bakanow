@@ -3,6 +3,10 @@ using System.Collections;
 
 public class CameraBehaviour : MonoBehaviour {
 
+    // TODO
+    // based on the weights, the camera will always stay on the middle of every camera object
+    // if the object get off screen, it'll get adjusted based on the rails
+
     public CameraWeights[] weights;
     Transform myTransform;
 
@@ -18,7 +22,10 @@ public class CameraBehaviour : MonoBehaviour {
 
     // the amount of Z that needs to be reallocated forward or back  
     public Vector3 ReallocateZ = Vector3.zero;
-    
+    // being set at camera rail
+    public Vector3 PositionYZ;
+
+    public Vector3 OutputVector;
 
 	// Use this for initialization
 	void Start () {
@@ -36,17 +43,16 @@ public class CameraBehaviour : MonoBehaviour {
 
         Debugs(debugs);
 
+        GetCameraDotOnWeights();
 
         CameraMoveXY();
         
-        GetCameraDotOnWeights();
 
         if (screenEdgeBehaviour != null)
             screenEdgeBehaviour();
 
-        // resets the Z translocating vector
-        ReallocateZ = Vector3.zero;
 
+        SetPosition();
 	}
 
 
@@ -70,64 +76,75 @@ public class CameraBehaviour : MonoBehaviour {
         Vector3 newPosition = Vector3.zero;
 
         int inCameraQuantity = weights.Length;
-       // bool bac = false;
+        CameraWeights.MIDDLE_WEIGHTS_COUNTER = weights.Length;
+
+
+        // bool bac = false;
         for (int i = 0; i < weights.Length; i++)
         {
+
             weights[i].cameraDot = Vector3.Dot(transform.forward,
                 (transform.position -  weights[i].transform.position).normalized);
-           
+           // Debug.Log(weights[i].cameraDot);
+            // entering screen edge
             if (weights[i].cameraDot > weights[i].ScreenEdgeEnterDot)
             {
 
                 inCameraQuantity--;
-                newPosition = myTransform.forward;
+
+
                 // verify if the weight it's already on edge
                 if (!weights[i].OnEdge)
                 {
+
                     // asign the behaviour to it
                     weights[i].OnEdge = true;
                     screenEdgeBehaviour += weights[i].ScreenEdgeEnter;
                 }
-                else
-                {
-
-                }
+              
             }
+            //Debug.Log(weights[i].cameraDot);  
+            //WE ARE NOT AT THE CENTER 
+           // Debug.Log(weights[i].cameraDot);
+            if ( weights[i].cameraDot > weights[i].OnScreenCenter)
+            {
+               // Debug.Log(weights[i].name);
+                CameraWeights.MIDDLE_WEIGHTS_COUNTER--;
+            }
+
             
+       
 
           
         }
+        // if everyone is there, then...
+        if (CameraWeights.MIDDLE_WEIGHTS_COUNTER == weights.Length)
+        {
 
-        //if (inCameraQuantity == weights.Length)
-        //{
-        //    for (int i = 0; i < weights.Length; i++)
-        //    {
-
-        //        if (weights[i].cameraDot <  weights[i].OutOfScreenEdgeDot)
-        //        {
-        //            if (myTransform.position.z < -20f)
-        //            {
+            screenEdgeBehaviour += CameraRail.Instance.ScreenCenterEnter;
 
 
-        //                newPosition = -transform.forward;
-        //            }
-        //        }
-        //    }
-        //}
-      //  if (myTransform.position.z < -20f)
+        }
 
-        myTransform.position -= newPosition * 0.2f;
+        OutputVector -= newPosition * 0.2f;
     }
 
 
-    public void CameraZReallocate(Vector3 reallocation)
+    public void CameraYZReallocate(Vector3 vec)
     {
-        
-
+        OutputVector.z = vec.z;
+        OutputVector.y = vec.y;
+        //transform.position 
     }
     
+    void SetPosition()
+    {
+        myTransform.position = OutputVector;
+    }
+
     public void CameraMoveXY()
     {
+
 
         Vector3 cameraPos = VectorFoo;
 		Vector3 baricenter;
@@ -160,32 +177,20 @@ public class CameraBehaviour : MonoBehaviour {
 			
            
         }
-
+        baricenter.y = 0;
+        baricenter.z = 0;
         // sum up to the baricenter and divide by the sum
-        cameraPos = baricenter + new Vector3(sumX / sumWeight, sumY / sumWeight, 0); 
+        cameraPos = baricenter + new Vector3(sumX / sumWeight, 0, 0); 
 
 		// cameraPos += transform.up *2;
         cameraPos.z = myTransform.position.z;
         // move the camera with easing
-        myTransform.position -= (myTransform.position - cameraPos) * 0.5f;
 
+        OutputVector.x -= (OutputVector.x - cameraPos.x) * 0.5f;
+        
     }
 
-    public void OnScreenEdgeEnter()
-    {
-
-    }
-
-    public void OnScreenEdgeStay()
-    {
-
-    }
-
-    public void OnScreenEdgeExit()
-    {
-
-    }
-
+    
 
 }
 

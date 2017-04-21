@@ -103,6 +103,8 @@ namespace DragonBones
                 }
             }
         }
+        // pick a new new shader
+        public string OverwriteMaterial = "Sprites/Default";
 
         [SerializeField]
         protected int _sortingOrder = 0;
@@ -207,6 +209,7 @@ namespace DragonBones
                 {
                     foreach (var eachJSON in textureAtlasJSON)
                     {
+                        UnityFactory.factory.overwriteMaterial = OverwriteMaterial;
                         UnityFactory.factory.LoadTextureAtlasData(eachJSON);
                     }
                 }

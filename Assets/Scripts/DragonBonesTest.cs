@@ -9,7 +9,7 @@ public class DragonBonesTest : MonoBehaviour {
 	void Start () {
 
         UnityFactory.factory.LoadDragonBonesData("PirateShip/ggj_robot"); // DragonBones file path (without suffix)
-        UnityFactory.factory.LoadTextureAtlasData("PirateShip/texture"); //Texture atlas file path (without suffix) 
+        UnityFactory.factory.LoadTextureAtlasData("PirateShip/texture");  //Texture atlas file path (without suffix) 
         // Create armature.
         var armatureComponent = UnityFactory.factory.BuildArmatureComponent("Armature"); // Input armature name
         // Play animation.

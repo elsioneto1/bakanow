@@ -7,6 +7,7 @@ public class CameraWeights : MonoBehaviour {
     public static int EDGE_WEIGHTS_COUNTER = 0;
     public static int MIDDLE_WEIGHTS_COUNTER = 0;
  
+
     public CameraBehaviour camBehav;
     public float weight;
     public Transform myTransform;
@@ -18,6 +19,10 @@ public class CameraWeights : MonoBehaviour {
     public float MaxWeightToBeAdd = 50;
     public float ScreenEdgeEnterDot = -0.83f;
     public bool OnEdge = false;
+
+
+
+    public float OnScreenCenter = -0.93f;
 
     public Color RAY_COLOR_ON_SCREEN = Color.blue;
 
@@ -36,10 +41,11 @@ public class CameraWeights : MonoBehaviour {
     // <asigned to delegates on camera behaviour>
     public void ScreenEdgeEnter()
     {
+
         if (camBehav == null)
             return;
 
-        MoveInfluence = 12;
+       // MoveInfluence = 12;
 
         Debug.Log("adasd");
         EDGE_WEIGHTS_COUNTER++;
@@ -57,10 +63,10 @@ public class CameraWeights : MonoBehaviour {
             camBehav.screenEdgeBehaviour -= ScreenEdgeStay;
             return;
         }
+        CameraRail.Instance.GoBack = true;
 
-
-        Debug.Log("executing logic");
-
+        //Debug.Log(name);
+       // Debug.Log(cameraDot);
         if  (cameraDot <  OutOfScreenEdgeDot)
         {
             Debug.Log("getting out of stay");
@@ -80,14 +86,51 @@ public class CameraWeights : MonoBehaviour {
             return;
         }
 
+        CameraRail.Instance.GoBack = false;
 
         OnEdge = false;
 
-        MoveInfluence = 5;
+       // MoveInfluence = 5;
 
         EDGE_WEIGHTS_COUNTER--;
         RAY_COLOR_ON_SCREEN = Color.blue;
         camBehav.screenEdgeBehaviour -= ScreenEdgeExit;
+    }
+
+    public void ScreenCenterEnter()
+    {
+        if (camBehav == null)
+            return;
+        camBehav.screenEdgeBehaviour -= ScreenCenterEnter;
+        camBehav.screenEdgeBehaviour += ScreenCenterStay;
+
+
+    }
+    public void ScreenCenterStay()
+    {
+        if (camBehav == null)
+        {
+            Debug.Log("Camera null");
+            camBehav.screenEdgeBehaviour -= ScreenCenterStay;
+            return;
+        }
+        CameraRail.Instance.GoForward = true;
+        if ( MIDDLE_WEIGHTS_COUNTER != TOTAL_WEIGHTS)
+        {
+            camBehav.screenEdgeBehaviour -= ScreenCenterStay;
+            camBehav.screenEdgeBehaviour += ScreenCenterExit;
+        }
+
+    }
+
+    public void ScreenCenterExit()
+    {
+
+
+        CameraRail.Instance.GoForward = false;
+
+        camBehav.screenEdgeBehaviour -= ScreenCenterExit;
+
     }
 
     // </asigned to delegates on camera behaviour>

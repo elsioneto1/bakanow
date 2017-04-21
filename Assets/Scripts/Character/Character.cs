@@ -111,6 +111,11 @@ public class Character : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	    
+        if (inputModifier ==   "P2")
+        {
+            return; // fuck it for now, just want to debug the camera
+        }
+
         InputX = Input.GetAxis(movementX);
         jumping = Input.GetAxis(jumpingKey);
         rightStickX = Input.GetAxis(rightStickHorizontal);
